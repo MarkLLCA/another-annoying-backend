@@ -59,25 +59,24 @@ class UserController extends Controller
 
         // authenticate the user
         $user = User::where('email', $request->email)->first();
-
         // checks if the user exists and if the password is correct
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json([
+            return response()->json([ 
                 'message' => 'Invalid credentials',
             ], 401);
         }
 
-        // Generate an authentication token
+        // Generate an authentication token 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        // Check the user's role
-        $permissions = $user->role === 'admin' ? 'crud' : 'view';
-
+        $redirectPath = $user->role === 'admin' ? '/admin/dashboard' : '/user/dashboard';
+        
+        //returns in json format
         return response()->json([
             'message' => 'Login successful',
             'token' => $token,
             'user' => $user,
-            'permissions' => $permissions,
+            'redirect_to' => $redirectPath,
         ], 200);
     }
 

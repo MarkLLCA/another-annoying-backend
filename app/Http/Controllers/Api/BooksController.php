@@ -24,8 +24,6 @@ class BooksController extends Controller
         {
             return response()->json(['message' => 'No books found'], 200);
         }
-        // Return the books as a JSON response
-        return response()->json($books);
     }
 
     public function store(Request $request)
@@ -57,12 +55,18 @@ class BooksController extends Controller
 
     }
 
-
+    // Show a specific book by ID
     public function show(Books $book)
     {
-        // Return the book as a JSON response using the BooksResource
-        return new BooksResource($book);
+        // Check if the book exists
+        if (!$book) {
+            return response()->json(['message' => 'Book not found'], 404);
+        }
+        return response()->json([
+            'book' => new BooksResource($book)
+        ], 200);
 
+        // return new BooksResource($book);
     }
     
 
